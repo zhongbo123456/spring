@@ -516,7 +516,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
-			//打标志位等信息
+			//设置启动时间，是否激活标志位等信息
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
@@ -524,6 +524,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
+			//准备bean工厂，注册了部分类
 			prepareBeanFactory(beanFactory);
 
 			try {
@@ -587,6 +588,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Switch to active.
 		this.startupDate = System.currentTimeMillis();
 		this.closed.set(false);
+		//设置激活
 		this.active.set(true);
 
 		if (logger.isDebugEnabled()) {
@@ -599,6 +601,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment.
+		//空方法，实现做一些环境变量的设置
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
@@ -647,8 +650,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
 		// Tell the internal bean factory to use the context's class loader etc.
+		//设置类加载器
 		beanFactory.setBeanClassLoader(getClassLoader());
+		//设置el表达式解析器
 		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+		//添加属性
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
 		// Configure the bean factory with context callbacks.
