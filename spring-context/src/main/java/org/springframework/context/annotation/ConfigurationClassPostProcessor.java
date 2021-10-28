@@ -249,8 +249,10 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			// Simply call processConfigurationClasses lazily at this point then.
 			processConfigBeanDefinitions((BeanDefinitionRegistry) beanFactory);
 		}
-
+		//为@Configuration修饰的类生成代理，增加额外功能，为其方法上增加@scope等，如果@Bean方法 new User,getBean("user")两次，两次调用方法，使用new创建
+		//这两次的user对象应该是不一样的，但是，spring为其增加了@scope,第二次可以从单例池中获取,两次user对象就是一样的。
 		enhanceConfigurationClasses(beanFactory);
+		//放入新的ImportAwareBeanPostProcessor
 		beanFactory.addBeanPostProcessor(new ImportAwareBeanPostProcessor(beanFactory));
 	}
 

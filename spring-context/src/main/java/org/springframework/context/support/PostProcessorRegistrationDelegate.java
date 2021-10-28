@@ -127,7 +127,15 @@ final class PostProcessorRegistrationDelegate {
 			}
 
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+
+			//ConfigurationClassPostProcessor类自己的子方法完成bd生成，bd存储；继承的方法用来为@Configuration类生成代理类
+			//AnotationcofigApplicaionContext(App.class),内置App类
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
+			//手动addBeanFactoryPostProcessor(new MyBeanFactoryPostProcessor())，然后自己refresh()走此处
+			//AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext();
+			//context.register(MyConfig.class);
+			//context.addBeanFactoryPostProcessor(new MyBeanFactoryPostProcessor());
+			//context.refresh();
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		}
 
