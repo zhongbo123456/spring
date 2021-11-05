@@ -51,7 +51,7 @@ final class PostProcessorRegistrationDelegate {
 	private PostProcessorRegistrationDelegate() {
 	}
 
-
+	//对BeanPostProcessor,BeanDefinitionRegistryPostProcessor类型进行注册，调用，手动add添加的只会调用不会注册。
 	public static void invokeBeanFactoryPostProcessors(
 			ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
 
@@ -92,6 +92,7 @@ final class PostProcessorRegistrationDelegate {
 			}
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
+			//BeanDefinitionRegisterPostProcessor类型，内置ConfigurationClassPostProcessor类型规定的方法调用，完成顶级注解修改的bd创建和存储
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
@@ -128,7 +129,7 @@ final class PostProcessorRegistrationDelegate {
 
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
 
-			//ConfigurationClassPostProcessor类自己的子方法完成bd生成，bd存储；继承的方法用来为@Configuration类生成代理类
+			//BeanDefinitionRegisterPostProcessor类型,内置ConfigurationClassPostProcessor类父类规定的方法为@Configuration类生成代理类
 			//AnotationcofigApplicaionContext(App.class),内置App类
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
 			//手动addBeanFactoryPostProcessor(new MyBeanFactoryPostProcessor())，然后自己refresh()走此处
@@ -186,6 +187,7 @@ final class PostProcessorRegistrationDelegate {
 		for (String postProcessorName : nonOrderedPostProcessorNames) {
 			nonOrderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
 		}
+		//BeanFactoryPostProcessor类型规定的方法,内置EventListenerMethodProcessor
 		invokeBeanFactoryPostProcessors(nonOrderedPostProcessors, beanFactory);
 
 		// Clear cached merged bean definitions since the post-processors might have
