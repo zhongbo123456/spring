@@ -532,24 +532,31 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				//对BeanPostProcessor,BeanDefinitionRegistryPostProcessor类型进行注册，调用
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				//将BeanPostProcessor存到DefaultListAbleBeanFactory中beanPostProcessors属性中
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				//国际化相关，用得少，web会使用
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				//事件相关，用的少，springcloud会使用
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				//web环境下使用
 				onRefresh();
 
 				// Check for listener beans and register them.
+				//注册监听器
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				//通过spring的BeanFactory创建单例（非延迟）
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
@@ -863,6 +870,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
 		// Initialize conversion service for this context.
+		//处理类型转换器
 		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
 				beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
 			beanFactory.setConversionService(
@@ -872,6 +880,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Register a default embedded value resolver if no bean post-processor
 		// (such as a PropertyPlaceholderConfigurer bean) registered any before:
 		// at this point, primarily for resolution in annotation attribute values.
+		//添加内置的ValueResolver，主要是占位符相关的，将配置文件中的值替换掉${user.id}
+		//这里仅仅EmbeddedValueResolver是存储BeanFactory,后续注入，发现占位符，他会进行替换
 		if (!beanFactory.hasEmbeddedValueResolver()) {
 			beanFactory.addEmbeddedValueResolver(strVal -> getEnvironment().resolvePlaceholders(strVal));
 		}
@@ -886,9 +896,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.setTempClassLoader(null);
 
 		// Allow for caching all bean definition metadata, not expecting further changes.
+		//冻结bd的修改，不让BeanFactoryPostProcessor修改
 		beanFactory.freezeConfiguration();
 
 		// Instantiate all remaining (non-lazy-init) singletons.
+		//创建非延迟加载的单例对象：底层beanFactory.getBean()->singleton
 		beanFactory.preInstantiateSingletons();
 	}
 
